@@ -1,0 +1,7 @@
+[package]
+name = "spu-rs-example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+spu-rs = { path = "../spu-rs" }

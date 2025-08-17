@@ -128,3 +128,17 @@ bazel_dep(name = "rules_proto_grpc_python", version = "5.0.0")
 
 # test
 bazel_dep(name = "googletest", version = "1.15.2", dev_dependency = True)
+
+bazel_dep(name = "rules_rust", version = "0.48.0")
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2021",
+    versions = ["1.76.0"],
+)
+
+use_repo(rust, "rust_toolchains")
+
+rust.crates_repository(
+    name = "crates",
+    cargo_lockfile = "//spu/libspu-sys:Cargo.lock",
+)

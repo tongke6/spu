@@ -1,0 +1,11 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+rust_binary(
+    name = "spu_rs_example",
+    srcs = ["src/main.rs"],
+    deps = [
+        "//spu/spu-rs",
+    ],
+)

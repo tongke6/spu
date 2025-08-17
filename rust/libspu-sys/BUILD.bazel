@@ -1,0 +1,22 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
+
+package(default_visibility = ["//visibility:public"])
+
+cargo_build_script(
+    name = "build_script",
+    srcs = ["build.rs"],
+    deps = [
+        "@crates//:cxx_build",
+    ],
+)
+
+rust_library(
+    name = "libspu_sys",
+    srcs = ["src/lib.rs"],
+    deps = [
+        ":build_script",
+        "//src/libspu",
+        "@crates//:cxx",
+    ],
+)
