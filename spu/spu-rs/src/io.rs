@@ -21,7 +21,8 @@ impl IoClient {
 
         unsafe {
             let bv = ffi::new_pt_buffer_view(ptr, pt_type, &shape, &strides);
-            ffi::make_shares(&self.inner, &bv, vtype, owner_rank)
+            let shares_ptr = ffi::make_shares(&self.inner, &bv, vtype, owner_rank);
+            shares_ptr.into_iter().collect()
         }
     }
 }

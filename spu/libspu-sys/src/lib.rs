@@ -175,12 +175,14 @@ pub mod ffi {
         include!("libspu/device/io.h");
         include!("libspu/core/value.h");
         include!("libspu/core/pt_buffer_view.h");
+        include!("spu/libspu-sys/src/vec_value.h");
 
         type SPUContext;
         type Context;
         type IoClient;
         type Value;
         type PtBufferView;
+        type VecOfUniquePtrValue;
 
         fn new_spu_context(config: &RuntimeConfig, lctx: SharedPtr<Context>) -> UniquePtr<SPUContext>;
         fn new_runtime_config(protocol: ProtocolKind, field: FieldType, fxp_fraction_bits: i64) -> UniquePtr<RuntimeConfig>;
@@ -195,7 +197,7 @@ pub mod ffi {
 
         // IO
         fn new_io_client(world_size: usize, config: &RuntimeConfig) -> UniquePtr<IoClient>;
-        unsafe fn make_shares(io: &IoClient, bv: &PtBufferView, vtype: Visibility, owner_rank: i32) -> Vec<UniquePtr<Value>>;
+        unsafe fn make_shares(io: &IoClient, bv: &PtBufferView, vtype: Visibility, owner_rank: i32) -> UniquePtr<VecOfUniquePtrValue>;
         unsafe fn new_pt_buffer_view(ptr: *const u8, pt_type: PtType, shape: &Vec<i64>, strides: &Vec<i64>) -> UniquePtr<PtBufferView>;
     }
 }

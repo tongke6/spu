@@ -2,6 +2,7 @@
 #include "yacl/link/factory.h"
 #include "libspu/device/io.h"
 #include "libspu/core/pt_buffer_view.h"
+#include "spu/libspu-sys/src/vec_value.h"
 #include "spu/libspu-sys/src/lib.rs.h"
 
 namespace spu::device {
@@ -9,11 +10,11 @@ namespace spu::device {
         return std::make_unique<IoClient>(world_size, config);
     }
 
-    rust::Vec<std::unique_ptr<spu::Value>> make_shares(const IoClient& io, const spu::PtBufferView& bv, spu::Visibility vtype, int32_t owner_rank) {
+    std::unique_ptr<VecOfUniquePtrValue> make_shares(const IoClient& io, const spu::PtBufferView& bv, spu::Visibility vtype, int32_t owner_rank) {
         auto shares = const_cast<IoClient&>(io).makeShares(bv, vtype, owner_rank);
-        rust::Vec<std::unique_ptr<spu::Value>> rust_shares;
+        auto rust_shares = std::make_unique<VecOfUniquePtrValue>();
         for (auto& share : shares) {
-            rust_shares.push_back(std::make_unique<spu::Value>(std::move(share)));
+            rust_shares->push_back(std::make_unique<spu::Value>(std::move(share)));
         }
         return rust_shares;
     }
