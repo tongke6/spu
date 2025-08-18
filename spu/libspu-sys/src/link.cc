@@ -9,18 +9,18 @@ namespace spu::device {
         return std::make_unique<IoClient>(world_size, config);
     }
 
-    rust::Vec<spu::Value> make_shares(const IoClient& io, const spu::PtBufferView& bv, spu::Visibility vtype, int32_t owner_rank) {
+    rust::Vec<std::unique_ptr<spu::Value>> make_shares(const IoClient& io, const spu::PtBufferView& bv, spu::Visibility vtype, int32_t owner_rank) {
         auto shares = const_cast<IoClient&>(io).makeShares(bv, vtype, owner_rank);
-        rust::Vec<spu::Value> rust_shares;
-        for (const auto& share : shares) {
-            rust_shares.push_back(share);
+        rust::Vec<std::unique_ptr<spu::Value>> rust_shares;
+        for (auto& share : shares) {
+            rust_shares.push_back(std::make_unique<spu::Value>(std::move(share)));
         }
         return rust_shares;
     }
 }
 
 namespace spu {
-    std::unique_ptr<PtBufferView> new_pt_buffer_view(const void* ptr, PtType pt_type, const rust::Vec<int64_t>& shape, const rust::Vec<int64_t>& strides) {
+    std::unique_ptr<PtBufferView> new_pt_buffer_view(const uint8_t* ptr, PtType pt_type, const rust::Vec<int64_t>& shape, const rust::Vec<int64_t>& strides) {
         return std::make_unique<PtBufferView>(ptr, pt_type, spu::Shape(shape.begin(), shape.end()), spu::Strides(strides.begin(), strides.end()));
     }
 }

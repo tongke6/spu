@@ -195,7 +195,7 @@ pub mod ffi {
 
         // IO
         fn new_io_client(world_size: usize, config: &RuntimeConfig) -> UniquePtr<IoClient>;
-        fn make_shares(io: &IoClient, bv: &PtBufferView, vtype: Visibility, owner_rank: i32) -> Vec<Value>;
-        fn new_pt_buffer_view(ptr: *const c_void, pt_type: PtType, shape: &Vec<i64>, strides: &Vec<i64>) -> UniquePtr<PtBufferView>;
+        unsafe fn make_shares(io: &IoClient, bv: &PtBufferView, vtype: Visibility, owner_rank: i32) -> Vec<UniquePtr<Value>>;
+        unsafe fn new_pt_buffer_view(ptr: *const u8, pt_type: PtType, shape: &Vec<i64>, strides: &Vec<i64>) -> UniquePtr<PtBufferView>;
     }
 }

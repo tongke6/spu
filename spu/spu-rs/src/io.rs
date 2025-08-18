@@ -17,11 +17,12 @@ impl IoClient {
         let pt_type = T::pt_type();
         let shape = vec![data.len() as i64];
         let strides = vec![1];
-        let ptr = data.as_ptr() as *const c_void;
+        let ptr = data.as_ptr() as *const u8;
 
-        let bv = ffi::new_pt_buffer_view(ptr, pt_type, &shape, &strides);
-
-        ffi::make_shares(&self.inner, &bv, vtype, owner_rank)
+        unsafe {
+            let bv = ffi::new_pt_buffer_view(ptr, pt_type, &shape, &strides);
+            ffi::make_shares(&self.inner, &bv, vtype, owner_rank)
+        }
     }
 }
 
