@@ -2,20 +2,14 @@ use crate::{FieldType, ProtocolKind};
 use libspu_sys::ffi;
 
 pub struct RuntimeConfig {
-    pub protocol: ProtocolKind,
-    pub field: FieldType,
-    pub fxp_fraction_bits: i64,
+    pub inner: cxx::UniquePtr<ffi::RuntimeConfig>,
 }
 
 impl RuntimeConfig {
-    fn to_ffi(&self) -> ffi::RuntimeConfig {
-        // This is not a complete implementation.
-        // I will need to implement the full conversion later.
-        ffi::RuntimeConfig::new(
-            self.protocol.into(),
-            self.field.into(),
-            self.fxp_fraction_bits,
-        )
+    pub fn new(protocol: ProtocolKind, field: FieldType, fxp_fraction_bits: i64) -> Self {
+        Self {
+            inner: ffi::new_runtime_config(protocol.into(), field.into(), fxp_fraction_bits),
+        }
     }
 }
 
@@ -24,12 +18,15 @@ pub struct SpuRuntime {
 }
 
 impl SpuRuntime {
-    pub fn new(config: &RuntimeConfig) -> Self {
-        // This is not a complete implementation.
-        // I will need to implement the full conversion later.
-        let ffi_config = config.to_ffi();
-        let lctx = unimplemented!(); // I need a link context here.
-        let runtime = ffi::SPUContext::new(ffi_config, lctx);
+    pub fn new(config: &RuntimeConfig, rank: usize) -> Self {
+        // This is a simplified setup for a 2-party in-memory link.
+        let mut desc = ffi::new_context_desc();
+        ffi::add_party(&mut desc, "party0", "localhost:9530");
+        ffi::add_party(&mut desc, "party1", "localhost:9531");
+
+        let lctx = ffi::create_mem_link_context(&desc, rank);
+
+        let runtime = ffi::new_spu_context(&config.inner, lctx);
         Self { _runtime: runtime }
     }
 }

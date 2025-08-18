@@ -1,4 +1,5 @@
 pub mod runtime;
+pub mod io;
 
 use libspu_sys::ffi;
 
